@@ -1,2 +1,3 @@
 [build]
 node_version = "22"
+  command = "npm ci && npm run build"
