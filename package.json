@@ -9,7 +9,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "start": "vite preview",
-    "postinstall": "npm install && npm run build"
+    "postinstall": "echo 'Postinstall script completed'"
   },
   "engines": {
     "node": ">=20.0.0"
