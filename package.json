@@ -11,6 +11,9 @@
     "start": "vite preview",
     "postinstall": "npm install && npm run build"
   },
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "dependencies": {
     "20": "^3.1.9",
     "axios": "^1.7.9",
