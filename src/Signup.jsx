@@ -13,7 +13,8 @@ function Signup() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
-  const apiUrl = import.meta.env.BACKEND_API_URL || "http://localhost:3000";
+  const apiUrl =
+    import.meta.env.VITE_BACKEND_API_URL || "http://localhost:3000";
 
   const navigate = useNavigate();
 
@@ -78,7 +79,12 @@ function Signup() {
         setError(response.data.message || "Registration failed");
       }
     } catch (err) {
-      console.error("Signup error:", err);
+      console.error("Signup error:", {
+        message: err.message,
+        status: err.response?.status,
+        data: err.response?.data,
+        origin: window.location.origin,
+      });
 
       if (err.response?.data?.message) {
         setError(err.response.data.message);

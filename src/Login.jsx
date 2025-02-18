@@ -5,7 +5,8 @@ function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
-  const apiUrl = import.meta.env.BACKEND_API_URL || "http://localhost:3000";
+  const apiUrl =
+    import.meta.env.VITE_BACKEND_API_URL || "http://localhost:3000";
 
   async function handleSubmit(e) {
     const api = axios.create({

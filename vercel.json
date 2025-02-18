@@ -1,5 +1,5 @@
 {
   "env": {
-    "BACKEND_API_URL": "https://backendapp-18bz.onrender.com"
+    "VITE_BACKEND_API_URL": "https://backendapp-18bz.onrender.com"
   }
 }
