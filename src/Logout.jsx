@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 function Logout() {
   const navigate = useNavigate();
-  const apiUrl = import.meta.env.FRONTEND_API_URL || "http://localhost:3000";
+  const apiUrl = import.meta.env.BACKEND_API_URL || "http://localhost:3000";
 
   const handleLogout = async () => {
     try {

@@ -13,7 +13,7 @@ function Signup() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
-  const apiUrl = import.meta.env.FRONTEND_API_URL || "http://localhost:3000";
+  const apiUrl = import.meta.env.BACKEND_API_URL || "http://localhost:3000";
 
   const navigate = useNavigate();
 
@@ -85,6 +85,7 @@ function Signup() {
       } else if (err.response?.status === 500) {
         setError("Server error. Please try again later.");
       } else if (!err.response) {
+        console.log(err.response);
         setError("Network error. Please check your connection.");
       } else {
         setError("Registration failed. Please try again.");

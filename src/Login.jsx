@@ -5,20 +5,20 @@ function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
-  const apiUrl = import.meta.env.FRONTEND_API_URL || "http://localhost:3000";
+  const apiUrl = import.meta.env.BACKEND_API_URL || "http://localhost:3000";
 
   async function handleSubmit(e) {
+    const api = axios.create({
+      baseURL: apiUrl,
+      withCredentials: true,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
     await e.preventDefault();
-    axios
-      .post(
-        `${apiUrl}/api/login`,
-        { email, password },
-        { withCredentials: true }, //cookie parsing
-        {
-          timeout: 5000,
-        }
-      )
-      // .then((res) => console.log(res.data))
+    api
+      .post(`${apiUrl}/api/login`, { email, password })
       .then(() => navigate("/home"))
       .catch((error) => {
         console.log(error);
