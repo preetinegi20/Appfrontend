@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useContext } from "react";
-import { ArticleContext } from "./Context/Article";
+import React, { useState, useEffect } from "react";
+import { useFilter } from "./Context/FilterContext";
 import { Bar, Pie } from "react-chartjs-2";
 import Toggle from "./menu/Toggle";
 import {
@@ -25,28 +25,31 @@ ChartJS.register(
 );
 
 function NewsAnalytics() {
-  const ArticleContextUse = useContext(ArticleContext);
-  const articles = ArticleContextUse.article;
-
-  const [authorData, setAuthorData] = useState([]);
-  const [typeData, setTypeData] = useState([]);
+  const [authorData, setAuthorData] = useState({});
+  const [typeData, setTypeData] = useState({});
+  const { filters, articles } = useFilter();
 
   // Process data for article trends by author
   useEffect(() => {
     const authorCounts = {};
     const typeCounts = {};
 
-    articles.forEach((article) => {
-      const author = article.author || "Unknown";
-      const type = article.source.name || "Unknown";
+    // Safety check for articles array
+    if (!Array.isArray(articles)) return;
 
+    articles.forEach((article) => {
+      // Fixed the counting logic to use actual author and type
+      const author = article?.author || "Unknown";
+      const type = article?.source?.name || "Unknown";
+
+      // Correctly increment counts
       authorCounts[author] = (authorCounts[author] || 0) + 1;
       typeCounts[type] = (typeCounts[type] || 0) + 1;
     });
 
     setAuthorData(authorCounts);
     setTypeData(typeCounts);
-  }, [articles]);
+  }, [articles]); // Removed filters from dependencies as it's not used
 
   // Prepare data for the Bar chart (Articles by Author)
   const authorChartData = {
@@ -56,6 +59,8 @@ function NewsAnalytics() {
         label: "Articles by Author",
         data: Object.values(authorData),
         backgroundColor: "rgba(75, 192, 192, 0.6)",
+        borderColor: "rgba(75, 192, 192, 1)",
+        borderWidth: 1,
       },
     ],
   };
@@ -74,19 +79,53 @@ function NewsAnalytics() {
           "#F2F1F1",
           "#FF5733",
         ],
+        borderColor: Array(Object.keys(typeData).length).fill("white"),
+        borderWidth: 1,
       },
     ],
   };
 
-  return (
-    <div className="news-analytics-container">
-      <Toggle></Toggle>
-      <h1>News Analytics</h1>
+  // Common chart options
+  const chartOptions = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: "bottom",
+        labels: {
+          padding: 20,
+        },
+      },
+      tooltip: {
+        backgroundColor: "rgba(0, 0, 0, 0.8)",
+        padding: 12,
+      },
+    },
+  };
 
-      <div className="charts-container">
-        <div className="chart-item">
-          <h2>Articles by Source Type (Pie Chart)</h2>
-          <Pie data={typeChartData} options={{ responsive: true }} />
+  return (
+    <div className="p-6 bg-white rounded-lg shadow-lg news-analytics-container">
+      <Toggle />
+      <h1 className="text-2xl font-bold mb-6">News Analytics</h1>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 charts-container">
+        <div className="p-4 bg-gray-50 rounded-lg chart-item">
+          <h2 className="text-lg font-semibold mb-4">Articles by Author</h2>
+          <div className="h-64">
+            <Bar
+              data={authorChartData}
+              options={chartOptions}
+              className="bar&pieStyle"
+            />
+          </div>
+        </div>
+
+        <div className="p-4 bg-gray-50 rounded-lg chart-item">
+          <h2 className="text-lg font-semibold mb-4">
+            Articles by Source Type
+          </h2>
+          <div className="h-64">
+            <Pie data={typeChartData} options={chartOptions} />
+          </div>
         </div>
       </div>
     </div>

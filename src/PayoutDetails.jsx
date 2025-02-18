@@ -1,17 +1,17 @@
 import React, { useState, useContext, useEffect } from "react";
-import { ArticleContext } from "./Context/Article";
+import { useFilter } from "./Context/FilterContext";
 import Toggle from "./menu/Toggle";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 
 function PayoutDetails() {
-  const ArticleContextUse = useContext(ArticleContext);
-  const articles = ArticleContextUse.article;
+  // const ArticleContextUse = useContext(ArticleContext);
+  // const articles = ArticleContextUse.article;
 
   const [ratePerArticle, setRatePerArticle] = useState(5000); // Default payout rate (INR)
   const [payouts, setPayouts] = useState({});
   const [editingAuthor, setEditingAuthor] = useState(null);
-
+  const { filters, articles } = useFilter();
   // Calculate payouts based on articles and rate
   const calculatePayouts = () => {
     const authorPayouts = {};

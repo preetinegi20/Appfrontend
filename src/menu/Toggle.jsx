@@ -1,6 +1,7 @@
 import React from "react";
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
+// import Home from "../Home";
 function Toggle() {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -20,10 +21,10 @@ function Toggle() {
       <div className={`menu ${isOpen ? "open" : ""}`}>
         <ul>
           <li>
-            <NavLink to="/">Home</NavLink>
+            <NavLink to="/home">Home</NavLink>
           </li>
           <li>
-            <NavLink to="/Dashboard">DashBoard</NavLink>
+            <NavLink to="/dashboard">DashBoard</NavLink>
           </li>
           <li>
             <NavLink to="/NewsAnalytics">NewsAnalytics</NavLink>

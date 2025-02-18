@@ -244,7 +244,15 @@ img {
 .search-container ::placeholder {
   color: #a1a1a1;
 }
-
+.resultmsg {
+  background-color: #b4f2fd;
+  font-size: 0.9rem;
+  margin: 1rem 0rem;
+  border-radius: 10px;
+  padding: 0.5rem;
+  color: #022a31;
+  box-shadow: 6px 10px 15px 1px #56b0c0;
+}
 /* hide the placeholder text on focus */
 .search-container :focus::placeholder {
   text-indent: -999px;
@@ -656,7 +664,10 @@ button {
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
-
+.payout-visualization canvas {
+  width: 100% !important;
+  height: 60% !important;
+}
 .payout-visualization h2 {
   font-size: 1.5rem;
   color: #333;
@@ -762,8 +773,12 @@ h1 {
   border: 1px solid #ddd;
   border-radius: 4px;
 }
-
-@media (min-width: 350px) and (max-width: 850px) {
+.news-analytics-container {
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  width: 100%;
+}
+@media (min-width: 300px) and (max-width: 850px) {
   /* General adjustments for text and padding */
   body {
     font-size: 14px;
@@ -903,11 +918,14 @@ h1 {
     padding: 10px;
   }
 
-  .overview,
-  .payout-visualization {
-    padding: 10px;
+  .payout-visualization canvas {
+    height: 50rem !important;
+    width: 100rem !important;
   }
-
+  .payout-visualization {
+    overflow-x: scroll !important;
+    width: 100%;
+  }
   .chart-container {
     height: 300px;
     width: 100%;
@@ -922,16 +940,46 @@ h1 {
   .chart-item {
     width: 100%;
   }
-}
-@media (max-width: 768px) {
-  .charts-container {
-    flex-direction: column;
-    align-items: center;
+  .chart-item:first-child {
+    width: 100% !important;
+    overflow-x: scroll !important;
   }
 
-  .chart-item {
-    width: 100%;
-    margin-bottom: 20px;
+  .chart-item:first-child canvas {
+    width: 80rem !important;
+    height: 40rem !important;
+  }
+
+  .chart-item:last-child {
+    width: 100% !important;
+    overflow-x: scroll !important;
+  }
+
+  .chart-item:last-child canvas {
+    width: 50rem !important;
+    height: 50rem !important;
+    margin: auto;
+  }
+}
+@media (max-width: 768px) {
+  .chart-item:first-child {
+    width: 100% !important;
+    overflow-x: scroll !important;
+  }
+
+  .chart-item:first-child canvas {
+    width: 80rem !important;
+    height: 40rem !important;
+  }
+
+  .chart-item:last-child {
+    width: 100% !important;
+  }
+
+  .chart-item:last-child canvas {
+    width: 40rem !important;
+    height: 40rem !important;
+    margin: auto;
   }
   .dashboard-container {
     padding: 15px;
@@ -967,10 +1015,6 @@ h1 {
     font-size: 1rem;
   }
 }
-.news-analytics-container {
-  padding: 20px;
-  font-family: Arial, sans-serif;
-}
 
 @media (min-width: 850px) {
   .navigations {
@@ -994,37 +1038,60 @@ h1 {
   .hamburger-icon {
     font-size: 3rem;
   }
-  @media (min-width: 1300px) {
-    canvas {
-      height: 40rem !important;
-      /* background-color: #00ccff2e !important; */
-    }
+
+  .charts-container {
+    flex-direction: column;
+  }
+  .chart-item:first-child {
+    width: 100% !important;
+  }
+
+  .chart-item:first-child canvas {
+    width: 90rem !important;
+    height: 50rem !important;
+  }
+
+  .chart-item:last-child {
+    width: 100% !important;
+  }
+
+  .chart-item:last-child canvas {
+    width: 50rem !important;
+    height: 50rem !important;
+    margin: auto;
+  }
+  .export-buttons {
+    margin-top: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 2rem;
+  }
+
+  .export-buttons button {
+    background-color: #4399ff;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .export-buttons button:hover {
+    background-color: #3678d4;
+  }
+
+  .export-buttons button:active {
+    background-color: #2b5fa8;
   }
 }
-.export-buttons {
-  margin-top: 20px;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 15px;
-  margin-bottom: 2rem;
-}
 
-.export-buttons button {
-  background-color: #4399ff;
-  color: white;
-  padding: 10px 15px;
-  border: none;
-  border-radius: 5px;
-  font-size: 14px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.export-buttons button:hover {
-  background-color: #3678d4;
-}
-
-.export-buttons button:active {
-  background-color: #2b5fa8;
+@media (min-width: 1300px) {
+  canvas {
+    height: 50rem !important;
+    /* background-color: #00ccff2e !important; */
+  }
 }

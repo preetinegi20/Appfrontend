@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { ArticleContext } from "./Context/Article";
-import { FilterContext } from "./Context/FilterTypes";
+import { useFilter } from "../src/Context/FilterContext";
 import { Bar } from "react-chartjs-2";
 import Toggle from "./menu/Toggle";
 
@@ -16,22 +15,22 @@ import {
 } from "chart.js";
 
 // Register the necessary components
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend
-);
 
 function Dashboard() {
-  const ArticleContextUse = useContext(ArticleContext);
-  const articles = ArticleContextUse.article;
-
+  // const ArticleContextUse = useContext(ArticleContext);
+  // const articles = ArticleContextUse.article;
+  const { filters, articles } = useFilter();
+  ChartJS.register(
+    CategoryScale,
+    LinearScale,
+    BarElement,
+    Title,
+    Tooltip,
+    Legend
+  );
   const { theme, toggleTheme } = useContext(ThemeContext);
-  const FilterContextUse = useContext(FilterContext);
-  const type = FilterContextUse.type || "All"; // Default to "All" if type is empty
+  // const FilterContextUse = useContext(FilterContext);
+  const type = filters.type || "All"; // Default to "All" if type is empty
 
   const [payoutData, setPayoutData] = useState({});
   const [totalArticles, setTotalArticles] = useState(0);
@@ -99,15 +98,17 @@ function Dashboard() {
         <p>Current Filter: {type}</p>
       </div>
 
-      <div className="payout-visualization">
+      <div className="payout">
         <h2>Payouts by Author</h2>
-        <Bar
-          data={chartData}
-          style={{
-            backgroundColor: theme === "light" ? "black" : "white",
-            color: theme === "light" ? "black" : "#fff",
-          }}
-        />
+        <div className="payout-visualization">
+          <Bar
+            data={chartData}
+            style={{
+              backgroundColor: theme === "light" ? "black" : "white",
+              color: theme === "light" ? "black" : "#fff",
+            }}
+          />
+        </div>
       </div>
     </div>
   );

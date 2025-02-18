@@ -1,16 +1,17 @@
 // export default PayoutCalculator;
 import React, { useContext, useState, useEffect } from "react";
-import { ArticleContext } from "./Context/Article";
+// import { ArticleContext } from "./Context/Article";
 import Toggle from "./menu/Toggle";
+import { useFilter } from "./Context/FilterContext";
 function PayoutCalculator() {
-  const ArticleContextUse = useContext(ArticleContext);
-  const articles = ArticleContextUse.article;
+  // const ArticleContextUse = useContext(ArticleContext);
+  // const articles = ArticleContextUse.article;
 
   const [ratePerArticle, setRatePerArticle] = useState(5000); // rs50 per article
   const [payouts, setPayouts] = useState({});
+  const { filters, articles } = useFilter();
   const calculatePayout = () => {
     const authorPayouts = {};
-
     articles.forEach((article) => {
       const author = article.author || "Unknown";
       if (!authorPayouts[author]) {

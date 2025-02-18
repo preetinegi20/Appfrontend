@@ -5,21 +5,21 @@ function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
-  const apiUrl = import.meta.env.VITE_API_URL;
+  const apiUrl = import.meta.env.FRONTEND_API_URL || "http://localhost:3000";
 
-  function handleSubmit(e) {
-    e.preventDefault();
+  async function handleSubmit(e) {
+    await e.preventDefault();
     axios
       .post(
         `${apiUrl}/api/login`,
         { email, password },
-        { withCredentials: true } //cookie parsing
-      )
-      .then((response) => {
-        if (response.status === 200) {
-          navigate("/home"); // Redirect after successful login
+        { withCredentials: true }, //cookie parsing
+        {
+          timeout: 5000,
         }
-      })
+      )
+      // .then((res) => console.log(res.data))
+      .then(() => navigate("/home"))
       .catch((error) => {
         console.log(error);
 

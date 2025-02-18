@@ -3,48 +3,30 @@ import Search from "./Search";
 import Filter from "./Filter.jsx";
 import { FilterContext } from "./Context/FilterTypes";
 import { ArticleContext } from "./Context/Article.jsx";
+import { useFilter } from "../src/Context/FilterContext.jsx";
 import Toggle from "./menu/Toggle.jsx";
 import { useNavigate } from "react-router-dom"; // Import useNavigate for navigation
 import Logout from "./Logout.jsx";
-
 function Home() {
   const navigate = useNavigate(); // Hook for navigation
-  const [error, setError] = useState(null);
-  const FilterContextUse = useContext(FilterContext);
-  const type = FilterContextUse.type || "All"; // Default to "All" if type is empty
-  const apiKey = "abe6c5969df346498bf6c8be5756cac6";
-  const newsAPIUrl = "https://newsapi.org/v2/everything?q=";
-  const ArticleContextUse = useContext(ArticleContext);
-  const articles = ArticleContextUse.article;
-  const setArticles = ArticleContextUse.setArticle;
-
+  // const apiKey = "abe6c5969df346498bf6c8be5756cac6";
+  // const newsAPIUrl = "https://newsapi.org/v2/everything?q=";
+  // const ArticleContextUse = useContext(ArticleContext);
+  const { error, articles, handleFilterChange } = useFilter();
   useEffect(() => {
-    fetch(`${newsAPIUrl}${type}&apiKey=${apiKey}`)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Failed to fetch data");
-        }
-        return response.json();
-      })
-      .then((data) => {
-        setArticles(data.articles);
-      })
-      .catch((err) => {
-        setError(err.message);
-      });
-  }, [type]);
-
+    handleFilterChange();
+  }, []); // Initial load
   const navigateToDashboard = () => {
     navigate("/dashboard"); // Redirect to the Dashboard page
   };
-
+  // console.log(`http://localhost:5000/news?category=sports`);
   return (
     <div>
       <Toggle></Toggle>
       <div className="navigations">
         <Search />
         <Logout />
-        <Filter pass={FilterContextUse.setType} />
+        <Filter />
       </div>
 
       <div className="news-container">
