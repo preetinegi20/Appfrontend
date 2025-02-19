@@ -12,6 +12,8 @@ export function FilterProvider({ children }) {
     endDate: "",
   });
 
+  const apiUrl =
+    import.meta.env.VITE_BACKEND_API_URL || "http://localhost:3000";
   const handleFilterChange = async () => {
     const queryParams = new URLSearchParams();
 
@@ -31,9 +33,7 @@ export function FilterProvider({ children }) {
     }
 
     try {
-      const response = await fetch(
-        `http://localhost:3000/news?${queryParams.toString()}`
-      );
+      const response = await fetch(`${apiUrl}/news?${queryParams.toString()}`);
       const data = await response.json();
       setArticles(data.articles);
     } catch (error) {
