@@ -28,6 +28,11 @@ function Signup() {
       /^[^\s@]+@[^\s@]+\.(com|net|org|io|gov|edu|in|co|dev)$/i;
     const USERNAME_REGEX = /^[a-zA-Z0-9_]{3,20}$/;
     const PASSWORD_REGEX = /^(?=.*[A-Za-z])(?=.*\d).{6,}$/;
+
+    if (!value.trim()) {
+      return "Fill all details first.";
+    }
+
     switch (type) {
       case "username": {
         return USERNAME_REGEX.test(value)
@@ -42,6 +47,7 @@ function Signup() {
           ? ""
           : "Password must be at least 6 characters and contain 1 letter & 1 number.";
       }
+
       default:
         return "Invalid Input type";
     }

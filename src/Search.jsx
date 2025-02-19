@@ -9,27 +9,25 @@ function Search() {
   const { filters, updateFilter, handleFilterChange } = useFilter();
   // console.log(setFilters);
   return (
-    <div>
-      <div className="search-container ">
-        <div className="searchInputWrapper">
-          <input
-            className="searchInput"
-            type="text"
-            placeholder="focus here to search"
-            value={filters.type}
-            onChange={(e) => updateFilter("type", e.target.value)}
+    <div className="search-container ">
+      <div className="searchInputWrapper">
+        <input
+          className="searchInput"
+          type="text"
+          placeholder="focus here to search"
+          value={filters.type}
+          onChange={(e) => updateFilter("type", e.target.value)}
+        />
+        <button
+          onClick={async () => {
+            await handleFilterChange();
+          }}
+        >
+          <img
+            src="	https://emojipedia.org/_next/static/media/search-light.f18d5293.svg"
+            alt=""
           />
-          <button
-            onClick={async () => {
-              await handleFilterChange();
-            }}
-          >
-            <img
-              src="	https://emojipedia.org/_next/static/media/search-light.f18d5293.svg"
-              alt=""
-            />
-          </button>
-        </div>
+        </button>
       </div>
     </div>
   );

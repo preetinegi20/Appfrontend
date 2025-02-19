@@ -22,12 +22,13 @@ function Home() {
   // console.log(`http://localhost:5000/news?category=sports`);
   return (
     <div>
-      <Toggle></Toggle>
       <div className="navigations">
+        <Toggle />
         <Search />
         <Logout />
-        <Filter />
       </div>
+
+      <Filter />
 
       <div className="news-container">
         <h1>Top News Articles</h1>
