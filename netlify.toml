@@ -1,3 +1,8 @@
 # In Netlify dashboard or netlify.toml
 [build.environment]
-  BACKEND_API_URL= "https://backendapp-18bz.onrender.com"
+  VITE_BACKEND_API_URL="https://backendapp-18bz.onrender.com"
+
+  [[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
