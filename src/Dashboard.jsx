@@ -2,7 +2,6 @@ import React, { useContext, useEffect, useState } from "react";
 import { useFilter } from "../src/Context/FilterContext";
 import { Bar } from "react-chartjs-2";
 import Toggle from "./menu/Toggle";
-
 import { ThemeContext } from "./Context/Theme";
 import {
   Chart as ChartJS,
@@ -14,12 +13,11 @@ import {
   Legend,
 } from "chart.js";
 
-// Register the necessary components
-
 function Dashboard() {
-  // const ArticleContextUse = useContext(ArticleContext);
-  // const articles = ArticleContextUse.article;
   const { filters, articles } = useFilter();
+  const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+
   ChartJS.register(
     CategoryScale,
     LinearScale,
@@ -28,31 +26,49 @@ function Dashboard() {
     Tooltip,
     Legend
   );
-  const { theme, toggleTheme } = useContext(ThemeContext);
-  // const FilterContextUse = useContext(FilterContext);
-  const type = filters.type || "All"; // Default to "All" if type is empty
 
+  const { theme, toggleTheme } = useContext(ThemeContext);
+  const type = filters.type || "All";
   const [payoutData, setPayoutData] = useState({});
   const [totalArticles, setTotalArticles] = useState(0);
 
-  // Calculate payouts data (assuming rate per article is a constant)
   useEffect(() => {
-    const ratePerArticle = 5000;
-    const authorPayouts = {};
-
-    articles.forEach((article) => {
-      const author = article.author || "Unknown";
-      if (!authorPayouts[author]) {
-        authorPayouts[author] = 0;
+    try {
+      setIsLoading(true);
+      if (!articles) {
+        throw new Error("No articles data available");
       }
-      authorPayouts[author] += ratePerArticle;
-    });
 
-    setPayoutData(authorPayouts);
-    setTotalArticles(articles.length);
+      const ratePerArticle = 5000;
+      const authorPayouts = {};
+
+      articles.forEach((article) => {
+        const author = article.author || "Unknown";
+        if (!authorPayouts[author]) {
+          authorPayouts[author] = 0;
+        }
+        authorPayouts[author] += ratePerArticle;
+      });
+
+      setPayoutData(authorPayouts);
+      setTotalArticles(articles.length);
+      setError(null);
+    } catch (err) {
+      setError(err.message);
+      console.error("Dashboard Error:", err);
+    } finally {
+      setIsLoading(false);
+    }
   }, [articles]);
 
-  // Prepare chart data for payouts
+  if (isLoading) {
+    return <div>Loading dashboard data...</div>;
+  }
+
+  if (error) {
+    return <div>Error loading dashboard: {error}</div>;
+  }
+
   const chartData = {
     labels: Object.keys(payoutData),
     datasets: [
@@ -64,17 +80,9 @@ function Dashboard() {
     ],
   };
 
-  useEffect(() => {
-    // Clean up previous chart if it exists
-    const chartInstance = ChartJS.instances[0];
-    if (chartInstance) {
-      chartInstance.destroy(); // Destroy the previous instance to prevent canvas re-use issues
-    }
-  }, [payoutData]);
-
   return (
     <div className="dashboard-container">
-      <Toggle></Toggle>
+      <Toggle />
       <h1>Dashboard</h1>
       <div className="cont">
         <div
