@@ -8,14 +8,18 @@ import Toggle from "./menu/Toggle.jsx";
 import { useNavigate } from "react-router-dom"; // Import useNavigate for navigation
 import Logout from "./Logout.jsx";
 function Home() {
-  const navigate = useNavigate(); // Hook for navigation
-  // const apiKey = "abe6c5969df346498bf6c8be5756cac6";
-  // const newsAPIUrl = "https://newsapi.org/v2/everything?q=";
-  // const ArticleContextUse = useContext(ArticleContext);
+  const navigate = useNavigate();
+
   const { error, articles, handleFilterChange } = useFilter();
+  // useEffect(() => {
+  //   handleFilterChange();
+  // }, []); // Initial load
+
+  const logged = document.cookie;
+
   useEffect(() => {
     handleFilterChange();
-  }, []); // Initial load
+  }, []);
   const navigateToDashboard = () => {
     navigate("/dashboard"); // Redirect to the Dashboard page
   };

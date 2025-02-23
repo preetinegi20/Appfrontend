@@ -1,13 +1,31 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
-function Login() {
+function Login({ setisAuthenticated }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
   const apiUrl =
     import.meta.env.VITE_BACKEND_API_URL || "http://localhost:3000";
+  const checkAuth = async () => {
+    try {
+      const res = await fetch("http://localhost:3000/api/check-auth", {
+        method: "GET",
+        credentials: "include", // Sends HTTP-only cookies
+      });
 
+      if (res.ok) {
+        return setisAuthenticated(true);
+      } else {
+        return setisAuthenticated(true);
+      }
+    } catch (error) {
+      console.error("Error checking authentication:", error);
+    }
+  };
+  useEffect(() => {
+    checkAuth();
+  }, []);
   async function handleSubmit(e) {
     const api = axios.create({
       baseURL: apiUrl,
@@ -20,7 +38,11 @@ function Login() {
     await e.preventDefault();
     api
       .post(`${apiUrl}/api/login`, { email, password })
-      .then(() => navigate("/home"))
+      .then((rr) => {
+        console.log(rr.data.data.accessToken);
+        rr.data.data.accessToken ? navigate("/home") : navigate("/login");
+      })
+
       .catch((error) => {
         console.log(error);
 

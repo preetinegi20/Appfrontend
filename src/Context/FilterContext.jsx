@@ -43,7 +43,6 @@ export function FilterProvider({ children }) {
   };
 
   const updateFilter = (filterName, value) => {
-    console.log("filterName: ", filterName, "value: ", value);
     setFilters((prev) => ({
       ...prev,
       [filterName]: value,

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
@@ -9,80 +9,104 @@ function Signup() {
     password: "",
   });
 
+  const [formErrors, setFormErrors] = useState({
+    username: "",
+    email: "",
+    password: "",
+  });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
+  // Get API URL from environment variable with fallback
   const apiUrl =
     import.meta.env.VITE_BACKEND_API_URL || "http://localhost:3000";
 
   const navigate = useNavigate();
 
+  // Input validation rules
+  const validationRules = {
+    username: {
+      pattern: /^[a-zA-Z0-9_]{3,20}$/,
+      message:
+        "Username must be 3-20 characters (letters, numbers, underscores only).",
+    },
+    email: {
+      pattern: /^[^\s@]+@[^\s@]+\.(com|net|org|io|gov|edu|in|co|dev)$/i,
+      message: "Invalid email format.",
+    },
+    password: {
+      pattern: /^(?=.*[A-Za-z])(?=.*\d).{6,}$/,
+      message:
+        "Password must be at least 6 characters and contain 1 letter & 1 number.",
+    },
+  };
+
+  // Validate single field
+  const validateField = (name, value) => {
+    if (!value.trim()) {
+      return "This field is required.";
+    }
+    const rule = validationRules[name];
+    return rule.pattern.test(value) ? "" : rule.message;
+  };
+
+  // Handle input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+
+    // Clear general error when user starts typing
     setError("");
+
+    // Validate field on change
+    const fieldError = validateField(name, value);
+    setFormErrors((prev) => ({
+      ...prev,
+      [name]: fieldError,
+    }));
   };
-  function validateInput(type, value) {
-    const EMAIL_REGEX =
-      /^[^\s@]+@[^\s@]+\.(com|net|org|io|gov|edu|in|co|dev)$/i;
-    const USERNAME_REGEX = /^[a-zA-Z0-9_]{3,20}$/;
-    const PASSWORD_REGEX = /^(?=.*[A-Za-z])(?=.*\d).{6,}$/;
 
-    if (!value.trim()) {
-      return "Fill all details first.";
-    }
+  // Check if form is valid
+  const isFormValid = () => {
+    const errors = {};
+    let isValid = true;
 
-    switch (type) {
-      case "username": {
-        return USERNAME_REGEX.test(value)
-          ? ""
-          : "Username must be 3-20 characters (letters, numbers, underscores only).";
-      }
-      case "email": {
-        return EMAIL_REGEX.test(value) ? "" : "Invalid email format.";
-      }
-      case "password": {
-        return PASSWORD_REGEX.test(value)
-          ? ""
-          : "Password must be at least 6 characters and contain 1 letter & 1 number.";
-      }
+    Object.keys(formData).forEach((field) => {
+      const fieldError = validateField(field, formData[field]);
+      errors[field] = fieldError;
+      if (fieldError) isValid = false;
+    });
 
-      default:
-        return "Invalid Input type";
-    }
-  }
-  const validateUsernameERROR = validateInput("username", formData.username);
-  const validateEmailERROR = validateInput("email", formData.email);
-  const validatePassERROR = validateInput("password", formData.password);
-  async function handleSubmit(e) {
+    setFormErrors(errors);
+    return isValid;
+  };
+
+  // Handle form submission
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!isFormValid()) {
+      setError("Please fix the errors in the form.");
+      return;
+    }
+
     setLoading(true);
     setError("");
     setSuccess("");
 
-    if (validateUsernameERROR || validateEmailERROR || validatePassERROR) {
-      setError(
-        validateUsernameERROR || validateEmailERROR || validatePassERROR
-      );
-      console.log(error);
-      setLoading(false);
-      return;
-    }
     try {
+      // Add timeout to axios request
       const response = await axios.post(`${apiUrl}/api/register`, formData, {
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         withCredentials: true,
+        timeout: 5000, // 5 second timeout
       });
 
       if (response.data.success) {
         setSuccess("Signup successful! Redirecting to login...");
         setFormData({ username: "", email: "", password: "" });
-        navigate("/login");
-      } else {
-        setError(response.data.message || "Registration failed");
+        setTimeout(() => navigate("/login"), 2000);
       }
     } catch (err) {
       console.error("Signup error:", {
@@ -92,22 +116,29 @@ function Signup() {
         origin: window.location.origin,
       });
 
-      if (err.response?.data?.message) {
-        setError(err.response.data.message);
-      } else if (err.response?.status === 500) {
-        setError("Server error. Please try again later.");
+      // Handle different types of errors
+      if (err.code === "ECONNABORTED") {
+        setError("Request timed out. Please try again.");
       } else if (!err.response) {
-        console.log(err.response);
-        setError("Network error. Please check your connection.");
+        setError(
+          `Cannot connect to server at ${apiUrl}. Please check if the server is running.`
+        );
+      } else if (err.response.status === 409) {
+        setError(
+          err.response.data.message || "Username or email already exists."
+        );
+      } else if (err.response.status === 500) {
+        setError("Server error. Please try again later.");
       } else {
-        setError("Registration failed. Please try again.");
+        setError(
+          err.response?.data?.message ||
+            "Registration failed. Please try again."
+        );
       }
     } finally {
       setLoading(false);
     }
-  }
-
-  // Rest of the component remains the same...
+  };
 
   return (
     <div className="topcontainer">
@@ -138,10 +169,16 @@ function Signup() {
               onChange={handleChange}
               disabled={loading}
               aria-label="Username"
+              className={formErrors.username ? "error" : ""}
             />
             <span className="input-icon" aria-hidden="true">
               👤
             </span>
+            {formErrors.username && (
+              <div className="field-error text-red-500 text-sm mt-1">
+                {formErrors.username}
+              </div>
+            )}
           </div>
 
           <div className="input-group">
@@ -154,10 +191,16 @@ function Signup() {
               onChange={handleChange}
               disabled={loading}
               aria-label="Email"
+              className={formErrors.email ? "error" : ""}
             />
             <span className="input-icon" aria-hidden="true">
               📧
             </span>
+            {formErrors.email && (
+              <div className="field-error text-red-500 text-sm mt-1">
+                {formErrors.email}
+              </div>
+            )}
           </div>
 
           <div className="input-group">
@@ -170,10 +213,16 @@ function Signup() {
               onChange={handleChange}
               disabled={loading}
               aria-label="Password"
+              className={formErrors.password ? "error" : ""}
             />
             <span className="input-icon" aria-hidden="true">
               🔒
             </span>
+            {formErrors.password && (
+              <div className="field-error text-red-500 text-sm mt-1">
+                {formErrors.password}
+              </div>
+            )}
           </div>
 
           <button
