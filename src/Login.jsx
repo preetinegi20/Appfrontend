@@ -9,7 +9,7 @@ function Login({ setisAuthenticated }) {
     import.meta.env.VITE_BACKEND_API_URL || "http://localhost:3000";
   const checkAuth = async () => {
     try {
-      const res = await fetch("http://localhost:3000/api/check-auth", {
+      const res = await fetch(`${apiUrl}/api/check-auth`, {
         method: "GET",
         credentials: "include", // Sends HTTP-only cookies
       });
